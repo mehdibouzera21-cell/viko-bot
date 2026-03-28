@@ -47,11 +47,13 @@ Réponds UNIQUEMENT en JSON valide (sans markdown) avec ce format:
   const data = await response.json();
   const text = data.choices?.[0]?.message?.content || "";
 
-  try {
-    return JSON.parse(text);
+    try {
+    const clean = text.replace(/```json|```/g, "").trim();
+    return JSON.parse(clean);
   } catch {
     return null;
   }
+
 }
 
 // ============================================
