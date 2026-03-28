@@ -55,6 +55,24 @@ Réponds UNIQUEMENT en JSON valide (sans markdown) avec ce format:
   }
 
 }
+async function generateVisual(prompt) {
+  try {
+    const response = await fetch("https://api.replicate.com/v1/models/black-forest-labs/flux-schnell/predictions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.REPLICATE_API_TOKEN}`,
+        "Content-Type": "application/json",
+        "Prefer": "wait"
+      },
+      body: JSON.stringify({
+        input: { prompt: prompt, num_outputs: 1 }
+      })
+    });
+    const data = await response.json();
+    return data.output?.[0] || null;
+  } catch { return null; }
+}
+
 
 // ============================================
 // FONCTION — Formater le script pour Telegram
