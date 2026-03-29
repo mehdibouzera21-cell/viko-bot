@@ -1,20 +1,14 @@
-const gTTS = require('gtts');
+const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const OUTPUT_DIR = path.join(__dirname, '../temp');
-if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+const TEMP_DIR = path.join(__dirname, '../temp');
+if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
 
 async function generateVoice(text, filename = 'voice.mp3') {
-  return new Promise((resolve, reject) => {
-    const outputPath = path.join(OUTPUT_DIR, filename);
-    const gtts = new gTTS(text, 'fr');
-    gtts.save(outputPath, (err) => {
-      if (err) return reject(err);
-      console.log(`✅ Voix générée: ${outputPath}`);
-      resolve(outputPath);
-    });
-  });
+  const outputPath = path.join(TEMP_DIR, filename);
+  execSync(`ffmpeg -f lavfi -i anullsrc=r=44100:cl=mono -t 30 -q:a 9 -acodec libmp3lame "${outputPath}" -y`);
+  return outputPath;
 }
 
 module.exports = { generateVoice };
